@@ -1,0 +1,7 @@
+include COPYING
+include LICENSE
+include README.rst
+include setup.py
+include livinglots_mailings/*.py
+recursive-include livinglots_mailings/fixtures *
+recursive-include livinglots_mailings/templates *

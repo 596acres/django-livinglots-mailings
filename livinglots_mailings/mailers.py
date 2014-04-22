@@ -4,7 +4,6 @@ import logging
 
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
-from django.contrib.sites.models import Site
 from django.core.mail.message import EmailMessage
 from django.template.loader import render_to_string
 
@@ -182,22 +181,3 @@ class DaysAfterAddedMailer(Mailer):
             receiver_type=ContentType.objects.get_for_model(recipient)
         )
         return records.count() > 0
-
-
-class DaysAfterParticipantAddedMailer(DaysAfterAddedMailer):
-    """
-    DaysAfterAddedMailer customized for participants.
-    """
-
-    def get_context(self, recipients):
-        context = super(DaysAfterParticipantAddedMailer, self).get_context(recipients)
-
-        # Add BASE_URL for full-path links back to the site
-        context['BASE_URL'] = Site.objects.get_current().domain
-
-        # Consolidate participant objects (handy when merging mailings)
-        context['lots'] = [r.content_object for r in recipients]
-
-        # Url for changing what one's organizing/watching
-        context['edit_url'] = recipients[0].get_edit_url()
-        return context

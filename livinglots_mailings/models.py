@@ -107,3 +107,12 @@ class DeliveryRecord(models.Model):
     receiver_type = models.ForeignKey(ContentType, null=True, blank=True)
     receiver_object_id = models.PositiveIntegerField(null=True, blank=True)
     receiver_object = generic.GenericForeignKey('receiver_type', 'receiver_object_id')
+
+
+from .mailers import DaysAfterParticipantAddedMailer
+
+
+class DaysAfterAddedMailing(Mailing, DaysAfterAddedMixin):
+
+    def get_mailer(self):
+        return DaysAfterParticipantAddedMailer(self)

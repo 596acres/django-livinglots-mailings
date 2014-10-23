@@ -1,83 +1,53 @@
 # -*- coding: utf-8 -*-
-from south.utils import datetime_utils as datetime
-from south.db import db
-from south.v2 import SchemaMigration
-from django.db import models
+from __future__ import unicode_literals
+
+from django.db import models, migrations
 
 
-class Migration(SchemaMigration):
+class Migration(migrations.Migration):
 
-    def forwards(self, orm):
-        # Adding model 'Mailing'
-        db.create_table(u'livinglots_mailings_mailing', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=100)),
-            ('duplicate_handling', self.gf('django.db.models.fields.CharField')(default='each', max_length=32)),
-            ('subject_template_name', self.gf('django.db.models.fields.CharField')(max_length=256)),
-            ('text_template_name', self.gf('django.db.models.fields.CharField')(max_length=256)),
-            ('last_checked', self.gf('django.db.models.fields.DateTimeField')()),
-        ))
-        db.send_create_signal(u'livinglots_mailings', ['Mailing'])
+    dependencies = [
+        ('contenttypes', '0001_initial'),
+    ]
 
-        # Adding M2M table for field target_types on 'Mailing'
-        m2m_table_name = db.shorten_name(u'livinglots_mailings_mailing_target_types')
-        db.create_table(m2m_table_name, (
-            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
-            ('mailing', models.ForeignKey(orm[u'livinglots_mailings.mailing'], null=False)),
-            ('contenttype', models.ForeignKey(orm[u'contenttypes.contenttype'], null=False))
-        ))
-        db.create_unique(m2m_table_name, ['mailing_id', 'contenttype_id'])
-
-        # Adding model 'DeliveryRecord'
-        db.create_table(u'livinglots_mailings_deliveryrecord', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('sent', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('recorded', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
-            ('mailing', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['livinglots_mailings.Mailing'])),
-            ('receiver_type', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['contenttypes.ContentType'], null=True, blank=True)),
-            ('receiver_object_id', self.gf('django.db.models.fields.PositiveIntegerField')(null=True, blank=True)),
-        ))
-        db.send_create_signal(u'livinglots_mailings', ['DeliveryRecord'])
-
-
-    def backwards(self, orm):
-        # Deleting model 'Mailing'
-        db.delete_table(u'livinglots_mailings_mailing')
-
-        # Removing M2M table for field target_types on 'Mailing'
-        db.delete_table(db.shorten_name(u'livinglots_mailings_mailing_target_types'))
-
-        # Deleting model 'DeliveryRecord'
-        db.delete_table(u'livinglots_mailings_deliveryrecord')
-
-
-    models = {
-        u'contenttypes.contenttype': {
-            'Meta': {'ordering': "('name',)", 'unique_together': "(('app_label', 'model'),)", 'object_name': 'ContentType', 'db_table': "'django_content_type'"},
-            'app_label': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'model': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
-        },
-        u'livinglots_mailings.deliveryrecord': {
-            'Meta': {'object_name': 'DeliveryRecord'},
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'mailing': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['livinglots_mailings.Mailing']"}),
-            'receiver_object_id': ('django.db.models.fields.PositiveIntegerField', [], {'null': 'True', 'blank': 'True'}),
-            'receiver_type': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['contenttypes.ContentType']", 'null': 'True', 'blank': 'True'}),
-            'recorded': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
-            'sent': ('django.db.models.fields.BooleanField', [], {'default': 'False'})
-        },
-        u'livinglots_mailings.mailing': {
-            'Meta': {'object_name': 'Mailing'},
-            'duplicate_handling': ('django.db.models.fields.CharField', [], {'default': "'each'", 'max_length': '32'}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'last_checked': ('django.db.models.fields.DateTimeField', [], {}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
-            'subject_template_name': ('django.db.models.fields.CharField', [], {'max_length': '256'}),
-            'target_types': ('django.db.models.fields.related.ManyToManyField', [], {'to': u"orm['contenttypes.ContentType']", 'symmetrical': 'False'}),
-            'text_template_name': ('django.db.models.fields.CharField', [], {'max_length': '256'})
-        }
-    }
-
-    complete_apps = ['livinglots_mailings']
+    operations = [
+        migrations.CreateModel(
+            name='DeliveryRecord',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('sent', models.BooleanField(default=False, help_text='The mailing was sent', verbose_name='sent')),
+                ('recorded', models.DateTimeField(help_text='When this mailing was recorded', verbose_name='recorded', auto_now_add=True)),
+                ('receiver_object_id', models.PositiveIntegerField(null=True, blank=True)),
+            ],
+            options={
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='Mailing',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(max_length=100, verbose_name='name')),
+                ('duplicate_handling', models.CharField(default=b'each', help_text='How should we handle mailings that are going to go to the same email address multiple times?', max_length=32, verbose_name='duplicate handling', choices=[(b'each', b'send each'), (b'first', b'send first'), (b'merge', b'merge')])),
+                ('subject_template_name', models.CharField(help_text='The path to the template to use when building the mailing subject line', max_length=256, verbose_name='subject template name')),
+                ('text_template_name', models.CharField(help_text='The path to the template to use when building the mailing text line', max_length=256, verbose_name='text template name')),
+                ('last_checked', models.DateTimeField(help_text='The last time this mailing was sent.', verbose_name='last checked')),
+                ('target_types', models.ManyToManyField(help_text='The types this mailing will be sent to', to='contenttypes.ContentType', verbose_name='target types')),
+            ],
+            options={
+            },
+            bases=(models.Model,),
+        ),
+        migrations.AddField(
+            model_name='deliveryrecord',
+            name='mailing',
+            field=models.ForeignKey(help_text='The mailing that was sent', to='livinglots_mailings.Mailing'),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='deliveryrecord',
+            name='receiver_type',
+            field=models.ForeignKey(blank=True, to='contenttypes.ContentType', null=True),
+            preserve_default=True,
+        ),
+    ]

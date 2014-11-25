@@ -45,6 +45,10 @@ class Mailing(models.Model):
         help_text=_('The path to the template to use when building the mailing '
                     'text line'),
     )
+    text_flatblock = models.ForeignKey('flatblocks.FlatBlock',
+        blank=True,
+        null=True,
+    )
 
     target_types = models.ManyToManyField(
         ContentType,

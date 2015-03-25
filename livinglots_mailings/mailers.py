@@ -197,8 +197,29 @@ class DaysAfterParticipantAddedMailer(DaysAfterAddedMailer):
         context['BASE_URL'] = Site.objects.get_current().domain
 
         # Consolidate participant objects (handy when merging mailings)
-        context['lots'] = list(set([r.content_object for r in recipients]))
+        context['lots'] = self.get_lots(recipients)
 
         # Url for changing what one's organizing/watching
         context['edit_url'] = recipients[0].get_edit_url()
         return context
+
+    def get_lots(self, recipients):
+        """
+        Get lots the recipients will be receiving email for.
+        
+        Filter the lots to ensure that a group does not have access to the lot.
+        Getting email about starting organizing on a lot when there's already a
+        project there is misleading/confusing.
+        """
+        lots = list(set([r.content_object for r in recipients]))
+        return filter(lambda lot: not lot.steward_projects.exists(), lots)
+
+    def get_recipients(self):
+        """
+        Get recipients for this mailing.
+
+        We confirm that the recipient has lots to receive the mailing for, 
+        first.
+        """
+        recipients = super(DaysAfterParticipantAddedMailer, self).get_recipients()
+        return [r for r in recipients if len(self.get_lots([r,])) > 0]

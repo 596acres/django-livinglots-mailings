@@ -1,4 +1,4 @@
-from django.contrib.contenttypes import generic
+from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
@@ -110,7 +110,7 @@ class DeliveryRecord(models.Model):
 
     receiver_type = models.ForeignKey(ContentType, null=True, blank=True)
     receiver_object_id = models.PositiveIntegerField(null=True, blank=True)
-    receiver_object = generic.GenericForeignKey('receiver_type', 'receiver_object_id')
+    receiver_object = GenericForeignKey('receiver_type', 'receiver_object_id')
 
 
 from .mailers import DaysAfterParticipantAddedMailer

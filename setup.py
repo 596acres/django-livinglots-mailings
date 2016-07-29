@@ -28,9 +28,9 @@ setup(
     platforms=['OS Independent'],
     classifiers=CLASSIFIERS,
     install_requires=[
-        'Django>=1.6.0',
+        'Django>=1.9.0',
         'django-braces>=1.4.0',
-        'django-model-utils==2.2.0',
+        'django-model-utils==2.5',
     ],
     packages=find_packages(),
     include_package_data=True,

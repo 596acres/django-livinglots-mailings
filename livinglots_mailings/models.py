@@ -50,6 +50,15 @@ class Mailing(models.Model):
         null=True,
     )
 
+    html_template_name = models.CharField(
+        _('html template name'),
+        max_length=256,
+        help_text=_('The path to the template to use when building the mailing '
+                    'html'),
+        blank=True,
+        null=True,
+    )
+
     target_types = models.ManyToManyField(
         ContentType,
         help_text=_('The types this mailing will be sent to'),

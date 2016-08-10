@@ -5,7 +5,7 @@ import logging
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.sites.models import Site
-from django.core.mail.message import EmailMessage
+from django.core.mail.message import EmailMultiAlternatives
 from django.template.loader import render_to_string
 
 from .models import DeliveryRecord
@@ -54,6 +54,11 @@ class Mailer(object):
 
     def build_message(self, recipients, context):
         return render_to_string(self.mailing.text_template_name, context)
+
+    def build_html_message(self, recipients, context):
+        if self.mailing.html_template_name:
+            return render_to_string(self.mailing.html_template_name, context)
+        return None
 
     def build_bcc(self, recipients):
         """Get a list of email addresses to BCC."""
@@ -107,12 +112,13 @@ class Mailer(object):
             self.build_message(recipients, context),
             email,
             bcc=self.build_bcc(recipients),
+            html_message=self.build_html_message(recipients, context),
         )
         return self.add_delivery_records(recipients)
 
     def _send(self, subject, message, email_address,
               bcc=[settings.FACILITATORS['global']], connection=None,
-              fail_silently=True):
+              fail_silently=True, html_message=None):
         # Subject cannot contain newlines
         subject = subject.replace('\n', '').strip()
 
@@ -121,7 +127,7 @@ class Mailer(object):
         logging.debug('bcc: %s' % (bcc,))
         logging.debug('full text: "%s"' % message)
 
-        mail = EmailMessage(
+        mail = EmailMultiAlternatives(
             u'%s%s' % (settings.EMAIL_SUBJECT_PREFIX, subject),
             message,
             from_email=settings.DEFAULT_FROM_EMAIL,
@@ -129,6 +135,8 @@ class Mailer(object):
             connection=connection,
             bcc=bcc,
         )
+        if html_message:
+            mail.attach_alternative(html_message, 'text/html')
         mail.send(fail_silently=fail_silently)
 
 

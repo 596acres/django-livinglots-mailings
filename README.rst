@@ -1,7 +1,7 @@
 django-livinglots-mailings
 ==========================
 
-Part of 596 Acres' `Living Lots <https://github.com/596acres/django-livinglots>`_,
+Part of 596 Acres' ® `Living Lots <https://github.com/596acres/django-livinglots>`_ ®,
 a Django app that sends emails based on simple criteria.
 
 This app is currently mostly used to email participants after a certain amount
@@ -13,6 +13,9 @@ through `django-livinglots-organize
 
 This app could easily be extended to send more email in response to more 
 complex conditions. See `models.py` and `mailers.py`.
+
+This module is part of the `Living Lots <https://github.com/596acres/django-livinglots>`_ ® framework by `596 Acres
+<https://596acres.org>`_ ®.
 
 
 License
